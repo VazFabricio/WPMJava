@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.time.LocalTime;
@@ -12,7 +11,7 @@ public class Game{
     final private static int PANEL_HEIGHT = 300;
     final private static int PANEL_WIDTH = 650;
 
-    final private static String[] WORDS = {"palvra", "sim", "nao", "amanha","ontem", "teste", "hoje", "felicidade", "amor", "raiva", "medo", "sorte", "Brasil", "Estados Unidos"};
+    final private static String[] WORDS = {"palavra", "sim", "nao", "amanha","ontem", "teste", "hoje", "felicidade", "amor", "raiva", "medo", "sorte", "Brasil", "Estados Unidos"};
     final private static int NUMBER_OF_ELEMENTS = WORDS.length-1;
 
     Random rand = new Random();
@@ -124,11 +123,14 @@ public class Game{
 
 
     public void endGame(JLabel label1, JLabel label2, JTextField type) throws InterruptedException {
-        for (int i = 0; i < 30;){
+
+        this.start = LocalTime.now().toNanoOfDay();
+        for (int i = 0; i <= 60;){
             i++;
             TimeUnit.SECONDS.sleep(1);
             System.out.println(i);
         }
+        this.end = LocalTime.now().toNanoOfDay();
 
         label1.setVisible(false);
         label2.setVisible(true);
@@ -137,7 +139,7 @@ public class Game{
         label2.setText("wpm: " + wpm());
     }
     public int wpm(){
-        double totalTime = 60;
+        double totalTime = end-start;;
         double seconds = totalTime / 1000000000.0;
 
         //wdp = (x characters / 5 ) / 1min = y WPM
