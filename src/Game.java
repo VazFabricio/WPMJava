@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.time.LocalTime;
@@ -61,19 +62,33 @@ public class Game{
         //panel
         panel.setLayout(null);
 
-       windowStart();
+        windowStart();
 
         //GeneratedWords
-        //current
-        JLabel label1 = new JLabel();
-        label1.setText(WORDS[rand.nextInt(NUMBER_OF_ELEMENTS)]);
-        label1.setBounds(290, 50, 80, 25);
-        panel.add(label1);
+        
+        String currentWord =  WORDS[rand.nextInt(NUMBER_OF_ELEMENTS)];
+        
+        //currentLabel
+        JLabel currentLabel = new JLabel();
+        currentLabel.setText(currentWord);
+        currentLabel.setBounds(290, 50, 80, 25);
+        panel.add(currentLabel);
+        
+        //previous
+        JLabel previous = new JLabel();
+        previous.setText(null);
+        previous.setBounds(200, 50, 80, 25);
+        panel.add(previous);
 
-        JLabel label2 = new JLabel();
-        label2.setText(null);
-        label2.setBounds(230, 100, 165, 25);
-        panel.add(label2);
+
+        JLabel wpmLabel = new JLabel();
+        wpmLabel.setText(null);
+        wpmLabel.setBounds(230, 100, 165, 25);
+        panel.add(wpmLabel);
+
+        JLabel counter = new JLabel();
+        counter.setBounds(160, 100, 165, 25);
+        panel.add(counter);
 
 
         //Input
@@ -92,16 +107,19 @@ public class Game{
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_SPACE) {
-                    label1.setVisible(true);
+                    currentLabel.setVisible(true);
                     type.setVisible(true);
-                    label2.setVisible(false);
-                    if (label1.getText().equals(type.getText().trim())) {
-                        charSize += label1.getText().length();
+                    wpmLabel.setVisible(false);
+                    if (currentLabel.getText().equals(type.getText().trim())) {
+                        charSize += currentLabel.getText().length();
                         System.out.println(charSize + " CERTO");
+                        previous.setForeground(Color.green);
                     } else {
                         System.out.println(" ERRADO");
+                        previous.setForeground(Color.red);
                     }
-                    label1.setText(WORDS[rand.nextInt(NUMBER_OF_ELEMENTS)]);
+                    previous.setText(currentLabel.getText());
+                    currentLabel.setText(WORDS[rand.nextInt(NUMBER_OF_ELEMENTS)]);
 
                     type.setText(null);
                 }
@@ -115,14 +133,14 @@ public class Game{
 
         panel.add(type);
 
-        endGame(label1, label2, type);
+        endGame(currentLabel, wpmLabel, type);
 
 
 
     }
 
 
-    public void endGame(JLabel label1, JLabel label2, JTextField type) throws InterruptedException {
+    public void endGame(JLabel currentLabel, JLabel wpmLabel, JTextField type) throws InterruptedException {
 
         this.start = LocalTime.now().toNanoOfDay();
         for (int i = 0; i <= 60;){
@@ -132,11 +150,11 @@ public class Game{
         }
         this.end = LocalTime.now().toNanoOfDay();
 
-        label1.setVisible(false);
-        label2.setVisible(true);
+        currentLabel.setVisible(false);
+        wpmLabel.setVisible(true);
         type.setVisible(false);
         end = LocalTime.now().toNanoOfDay();
-        label2.setText("wpm: " + wpm());
+        wpmLabel.setText("wpm: " + wpm());
     }
     public int wpm(){
         double totalTime = end-start;;
