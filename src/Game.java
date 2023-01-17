@@ -71,13 +71,14 @@ public class Game{
         //currentLabel
         JLabel currentLabel = new JLabel();
         currentLabel.setText(currentWord);
+
         currentLabel.setBounds(290, 50, 80, 25);
         panel.add(currentLabel);
         
         //previous
         JLabel previous = new JLabel();
         previous.setText(null);
-        previous.setBounds(200, 50, 80, 25);
+        previous.setBounds(290, 170, 80, 25);
         panel.add(previous);
 
 
