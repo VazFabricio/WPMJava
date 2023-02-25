@@ -2,9 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
 import java.time.LocalTime;
-import java.util.Random;
-import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 public class Game{
@@ -12,25 +11,17 @@ public class Game{
     final private static int PANEL_HEIGHT = 300;
     final private static int PANEL_WIDTH = 650;
 
-    final private static String[] WORDS = {"palavra", "sim", "nao", "amanha","ontem", "teste", "hoje", "felicidade", "amor", "raiva", "medo", "sorte", "Brasil", "Estados Unidos"};
-    final private static int NUMBER_OF_ELEMENTS = WORDS.length-1;
-
-    Random rand = new Random();
-
-    Scanner sc = new Scanner(System.in);
-
-    String [] compare = new String [2];
     int charSize = 0;
 
-    private double start;
-    private double end;
+    public double start;
+    public double end;
 
-    String generatedWord  = " ";
+    Calculator calculator = new Calculator();
     JFrame frame = new JFrame();
     JPanel panel = new JPanel();
 
-
-
+    Reader readLine = new Reader();
+    final private static String filePath = "src/javaWords.txt";
 
     public void windowStart() throws InterruptedException {
         JLabel labelStart = new JLabel();
@@ -47,7 +38,7 @@ public class Game{
         labelStart.setText(null);
 
     }
-    public void Game() throws InterruptedException {
+    public void createGame() throws InterruptedException, IOException {
         //Graph
         //window
         frame = new JFrame();
@@ -66,13 +57,14 @@ public class Game{
 
         //GeneratedWords
         
-        String currentWord =  WORDS[rand.nextInt(NUMBER_OF_ELEMENTS)];
+        String currentWord = readLine.lerLinha(filePath);
         
         //currentLabel
         JLabel currentLabel = new JLabel();
         currentLabel.setText(currentWord);
-
-        currentLabel.setBounds(290, 50, 80, 25);
+        currentLabel.setOpaque(false);
+        currentLabel.setBackground(Color.gray);
+        currentLabel.setBounds(290, 50, 200, 25);
         panel.add(currentLabel);
         
         //previous
@@ -120,8 +112,11 @@ public class Game{
                         previous.setForeground(Color.red);
                     }
                     previous.setText(currentLabel.getText());
-                    currentLabel.setText(WORDS[rand.nextInt(NUMBER_OF_ELEMENTS)]);
-
+                    try {
+                        currentLabel.setText(readLine.lerLinha(filePath));
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
                     type.setText(null);
                 }
 
@@ -134,14 +129,11 @@ public class Game{
 
         panel.add(type);
 
-        endGame(currentLabel, wpmLabel, type);
-
-
+        endGame(currentLabel, wpmLabel, type, previous);
 
     }
 
-
-    public void endGame(JLabel currentLabel, JLabel wpmLabel, JTextField type) throws InterruptedException {
+    public void endGame(JLabel currentLabel, JLabel wpmLabel, JTextField type, JLabel previous) throws InterruptedException {
 
         this.start = LocalTime.now().toNanoOfDay();
         for (int i = 0; i <= 60;){
@@ -154,18 +146,9 @@ public class Game{
         currentLabel.setVisible(false);
         wpmLabel.setVisible(true);
         type.setVisible(false);
+        previous.setVisible(false);
         end = LocalTime.now().toNanoOfDay();
-        wpmLabel.setText("wpm: " + wpm());
-    }
-    public int wpm(){
-        double totalTime = end-start;;
-        double seconds = totalTime / 1000000000.0;
-
-        //wdp = (x characters / 5 ) / 1min = y WPM
-        int numChars = charSize;
-        int wpm = (int) ((((double) numChars / 5) / seconds) * 60);
-
-        return wpm;
+        wpmLabel.setText("wpm: " + calculator.wpm(end, start,charSize));
     }
 
 }
